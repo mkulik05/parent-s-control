@@ -27,6 +27,7 @@ class Child extends Component{
   static navigationOptions = {
     header: null,
   };
+  
   state = {
       location: null,
       sendLocation:1234,
@@ -34,6 +35,20 @@ class Child extends Component{
       color : 0
     };
 
+	constructor(props) {
+        super(props);
+      var config = {
+    apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
+    authDomain: "location-72fca.firebaseapp.com",
+    databaseURL: "https://location-72fca.firebaseio.com",
+    projectId: "location-72fca",
+    storageBucket: "location-72fca.appspot.com",
+    messagingSenderId: "440309375391"
+  };
+  firebase.initializeApp(config);
+
+    }
+	
     componentWillMount() {
       if (Platform.OS === 'android' && !Constants.isDevice) {// если платформа android и приложение работает не в симуляторе
         this.setState({
@@ -64,36 +79,42 @@ class Child extends Component{
         this.setState({
           location:location,
          });
+		 return location 
     };
    sendLocation() {
      this.setState({
        sendLocation:null
       });
-     var config = {
-    apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
-    authDomain: "location-72fca.firebaseapp.com",
-    databaseURL: "https://location-72fca.firebaseio.com",
-    projectId: "location-72fca",
-    storageBucket: "location-72fca.appspot.com",
-    messagingSenderId: "440309375391"
-  };
-  firebase.initializeApp(config);
- firebase.database().ref('users/').set({
+     firebase.database().ref('users/').set({
    loc: this.state.location
  });
  //alert(228)
+         clearInterval(this.interval);
+        this.interval = setInterval(() => {
+            this.sendLocation()
+			this.get_location()
+        }, 2000)
+}
+get_location = async () => {
+let location = await Location.getCurrentPositionAsync({}); // если getCurrentPositionAsync выполнилось до конца
+    //  alert(location.coords.latitude)
+      //alert(location.coords.longitude)
+        //}, 3000);
+        this.setState({
+          location:location,
+         });
 }
 onMixelPress (mixelNumber) {
 
     //console.log(mixelNumber)
-    let tempColors = this.state.mixelColors
+    let tempColors = this.state.mixelColors      
 
     tempColors[mixelNumber] = this.state.color
     this.setState({mixelColors: tempColors})
   }
 onSuggestPress(colorNum){
    this.setState({
-     color: colorNum
+     color: colorNum                          
    })
 }
   render() {
