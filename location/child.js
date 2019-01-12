@@ -93,7 +93,7 @@ class Child extends Component{
         this.interval = setInterval(() => {
             this.sendLocation()
 			this.get_location()
-        }, 2000)
+        }, 1000)
 }
 get_location = async () => {
 let location = await Location.getCurrentPositionAsync({}); // если getCurrentPositionAsync выполнилось до конца
