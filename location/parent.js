@@ -51,12 +51,6 @@ class Parent extends Component{
       return (
         <MapView
         style={{ flex: 1 }}
-        initialRegion={{
-          latitude: this.state.latitude,
-          longitude: this.state.longitude,
-          latitudeDelta: 0.005,//this.state.latitudeDelta,
-          longitudeDelta: 0.005//this.state.longitudeDelta,
-        }}
 		 region={{
           latitude: this.state.latitude,
           longitude: this.state.longitude,
