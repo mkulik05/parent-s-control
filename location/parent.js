@@ -57,6 +57,12 @@ class Parent extends Component{
           latitudeDelta: 0.005,//this.state.latitudeDelta,
           longitudeDelta: 0.005//this.state.longitudeDelta,
         }}
+		 region={{
+          latitude: this.state.latitude,
+          longitude: this.state.longitude,
+          latitudeDelta: 0.005,//this.state.latitudeDelta,
+          longitudeDelta: 0.005//this.state.longitudeDelta,
+        }}
       >
 
       <Marker
