@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { WebBrowser,Constants, Location, Permissions,MapView} from 'expo';
 import * as firebase from 'firebase'
+import QRCode from 'react-native-qrcode';
 
 const colors = [
   "#C0392B",
@@ -32,10 +33,14 @@ class Child extends Component{
       location: null,
       sendLocation:1234,
       mixelColors : [],
-      color : 0
+      color : 0,
+	  id:null
     };
 
 	constructor(props) {
+
+		//alert(id.replaceAll('-', ''))
+		//alert(id_spl)
         super(props);
       var config = {
     apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
@@ -61,6 +66,19 @@ class Child extends Component{
     }
 
     _getLocationAsync = async () => {
+				var id = Constants.deviceId
+		id = id.split("")
+		var r_id = ""
+		for (var i = 0; i < id.length; i++) { 
+  if (id[i] == "-"){
+	  id[i]= ""	  
+  }
+  r_id = r_id+id[i]
+}
+r_id = "c"+r_id
+		  this.setState({
+          id: r_id,
+        });
       let { status } = await Permissions.askAsync(Permissions.LOCATION); // Определяет, предоставлено ли вашему приложению доступ к предоставленному типу разрешения.
       if (status !== 'granted') { // если доступа не получено
         this.setState({
@@ -85,7 +103,7 @@ class Child extends Component{
      this.setState({
        sendLocation:null
       });
-     firebase.database().ref('users/').set({
+     firebase.database().ref('users/'+this.state.id).set({
    loc: this.state.location
  });
  //alert(228)
@@ -132,22 +150,9 @@ onSuggestPress(colorNum){
       <TouchableOpacity key={'s' + colorNum} onPress={() => { this.onSuggestPress(colorNum) }}style={[styles.mixel, {backgroundColor: colors[colorNum]}]}/>
     )
   }
-    if(this.state.location){
-      if(this.state.sendLocation){
-        return (
-
-          <View style={styles.container}>
-          <Button
-      onPress={() => {this.sendLocation()}}
-      title="Play "
-      color="#841584"
-      accessibilityLabel="Learn more about this purple button"
-    />
-        </View>
-
-
-              )
-      } else {
+  
+    if(!this.state.sendLocation){
+      
         return(
           <View style={styles.container_mixel}>
 
@@ -157,15 +162,33 @@ onSuggestPress(colorNum){
             {suggests}
          </View>
         )
-      }
+      
     } else {
+		if(this.state.id){
       return(
           <View style={styles.container}>
-          <Text>Waiting..</Text>
-        </View>
+           <QRCode
+          value={this.state.id}
+          size={200}
+          bgColor='purple'
+          fgColor='white'/>
+		  <Button
+      onPress={() => {this.sendLocation()}}
+      title="I have already scan QR code"
+      color="#841584"
+      accessibilityLabel="Learn more about this purple button"
+    />
+      </View>
+	  
       )
-    }
+    } else { 
+	
+	return(<View style={styles.container}><Text>ads</Text></View>)
+	
   }
+}
+}
+
 }
 const styles = StyleSheet.create({
   container: {

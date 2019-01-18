@@ -1,4 +1,5 @@
 import React,{Component} from 'react';
+
 import {
   Image,
   Platform,
@@ -8,8 +9,13 @@ import {
   TouchableOpacity,
   View,
   Button,
-} from 'react-native';
-import { WebBrowser,Constants, Location, Permissions,MapView} from 'expo';
+  Alert,
+  Linking, 
+  Dimensions, 
+  LayoutAnimation, 
+  StatusBar, 
+  } from 'react-native';
+import { BarCodeScanner, WebBrowser,Constants, Location, Permissions,MapView} from 'expo';
 import { Marker, ProviderPropType } from 'react-native-maps';
 import * as firebase from 'firebase'
 
@@ -21,8 +27,28 @@ class Parent extends Component{
       latitude: null,
       longitude: null,
       region:null,
-      getLocation:12345
+      getLocation:12345,
+	  hasCameraPermission: null,
+      lastScannedUrl: null,
     };
+	
+	componentDidMount() {
+    this._requestCameraPermission();
+  }
+  _requestCameraPermission = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    this.setState({
+      hasCameraPermission: status === 'granted',
+    });
+  };
+
+  _handleBarCodeRead = result => {
+    if (result.data !== this.state.lastScannedUrl) {
+      LayoutAnimation.spring();
+      this.setState({ lastScannedUrl: result.data });
+    }
+  };
+
     getLocation() {
       this.setState({
           getLocation:null
@@ -36,8 +62,8 @@ class Parent extends Component{
     messagingSenderId: "440309375391"
   };
   firebase.initializeApp(config);
-  firebase.database().ref('users/').on('value', (snapshot) => {
-     const longitude = snapshot.val().loc.coords.longitude;
+  firebase.database().ref('users/'+this.state.lastScannedUrl).on('value', (snapshot) => {
+     const longitude = snapshot.val().loc.coords.longitude;  
      const latitude = snapshot.val().loc.coords.latitude;
      this.setState({
            longitude:longitude,
@@ -47,6 +73,7 @@ class Parent extends Component{
 }
 
   render() {
+	  if(this.state.lastScannedUrl){
     if(this.state.latitude){
       return (
         <MapView
@@ -91,6 +118,29 @@ class Parent extends Component{
     }
 
     }
+  } else {
+	  return(
+	   <View style={styles.container}>
+
+        {this.state.hasCameraPermission === null
+          ? <Text>Requesting for camera permission</Text>
+          : this.state.hasCameraPermission === false
+              ? <Text style={{ color: '#fff' }}>
+                  Camera permission is not granted
+                </Text>
+              : <BarCodeScanner
+                  onBarCodeRead={this._handleBarCodeRead}
+                  style={{
+                    height: Dimensions.get('window').height,
+                    width: Dimensions.get('window').width,
+                  }}
+                />}
+ 
+
+        <StatusBar hidden />
+      </View>
+	  )
+  }
   }
 }
 const styles = StyleSheet.create({
