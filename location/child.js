@@ -169,7 +169,7 @@ onSuggestPress(colorNum){
           <View style={styles.container}>
            <QRCode
           value={this.state.id}
-          size={200}
+          size={300}
           bgColor='purple'
           fgColor='white'/>
 		  <Button
