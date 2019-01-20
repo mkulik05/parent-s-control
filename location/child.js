@@ -28,13 +28,15 @@ class Child extends Component{
   static navigationOptions = {
     header: null,
   };
-  
+
   state = {
       location: null,
       sendLocation:1234,
       mixelColors : [],
       color : 0,
-	  id:null
+	    id:null,
+      type:null,
+      first:123
     };
 
 	constructor(props) {
@@ -42,6 +44,10 @@ class Child extends Component{
 		//alert(id.replaceAll('-', ''))
 		//alert(id_spl)
         super(props);
+
+    }
+
+    componentWillMount() {
       var config = {
     apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
     authDomain: "location-72fca.firebaseapp.com",
@@ -51,10 +57,37 @@ class Child extends Component{
     messagingSenderId: "440309375391"
   };
   firebase.initializeApp(config);
+      var id = Constants.deviceId
+  id = id.split("")
+  var r_id = ""
+  for (var i = 0; i < id.length; i++) {
+if (id[i] == "-"){
+  id[i]= ""
+}
+r_id = r_id+id[i]
+}
+r_id = "c"+r_id
+    this.setState({
+        id: r_id,
+      });
+      firebase.database().ref('users/'+r_id).once('value',(snapshot) => {
+        try{
+          const longitude = snapshot.val().loc.coords.longitude;
+          if(this.state.first){
+          this.setState({
+              type: null,
+              first:null
+            });
+}
+      } catch (error){
+        this.setState({
+          type: 1232,
+          });
+  alert("error")  
+      }
 
-    }
-	
-    componentWillMount() {
+       });
+      this.sendLocation()
       if (Platform.OS === 'android' && !Constants.isDevice) {// если платформа android и приложение работает не в симуляторе
         this.setState({
           errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
@@ -66,19 +99,6 @@ class Child extends Component{
     }
 
     _getLocationAsync = async () => {
-				var id = Constants.deviceId
-		id = id.split("")
-		var r_id = ""
-		for (var i = 0; i < id.length; i++) { 
-  if (id[i] == "-"){
-	  id[i]= ""	  
-  }
-  r_id = r_id+id[i]
-}
-r_id = "c"+r_id
-		  this.setState({
-          id: r_id,
-        });
       let { status } = await Permissions.askAsync(Permissions.LOCATION); // Определяет, предоставлено ли вашему приложению доступ к предоставленному типу разрешения.
       if (status !== 'granted') { // если доступа не получено
         this.setState({
@@ -97,7 +117,7 @@ r_id = "c"+r_id
         this.setState({
           location:location,
          });
-		 return location 
+		 return location
     };
    sendLocation() {
      this.setState({
@@ -125,15 +145,20 @@ let location = await Location.getCurrentPositionAsync({}); // если getCurren
 onMixelPress (mixelNumber) {
 
     //console.log(mixelNumber)
-    let tempColors = this.state.mixelColors      
+    let tempColors = this.state.mixelColors
 
     tempColors[mixelNumber] = this.state.color
     this.setState({mixelColors: tempColors})
   }
 onSuggestPress(colorNum){
    this.setState({
-     color: colorNum                          
+     color: colorNum
    })
+}
+game(){
+  this.setState({
+    type: null,
+  })
 }
   render() {
     let mixels = [], suggests = []
@@ -150,10 +175,9 @@ onSuggestPress(colorNum){
       <TouchableOpacity key={'s' + colorNum} onPress={() => { this.onSuggestPress(colorNum) }}style={[styles.mixel, {backgroundColor: colors[colorNum]}]}/>
     )
   }
-  
-    if(!this.state.sendLocation){
-      
-        return(
+
+    if(!this.state.type){
+              return(
           <View style={styles.container_mixel}>
 
              {mixels}
@@ -162,9 +186,8 @@ onSuggestPress(colorNum){
             {suggests}
          </View>
         )
-      
+
     } else {
-		if(this.state.id){
       return(
           <View style={styles.container}>
            <QRCode
@@ -173,19 +196,15 @@ onSuggestPress(colorNum){
           bgColor='purple'
           fgColor='white'/>
 		  <Button
-      onPress={() => {this.sendLocation()}}
+      onPress={() => {this.game()}}
       title="I have already scan QR code"
       color="#841584"
       accessibilityLabel="Learn more about this purple button"
     />
       </View>
-	  
+
       )
-    } else { 
-	
-	return(<View style={styles.container}><Text>ads</Text></View>)
-	
-  }
+
 }
 }
 
