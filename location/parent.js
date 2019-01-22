@@ -10,10 +10,10 @@ import {
   View,
   Button,
   Alert,
-  Linking, 
-  Dimensions, 
-  LayoutAnimation, 
-  StatusBar, 
+  Linking,
+  Dimensions,
+  LayoutAnimation,
+  StatusBar,
   } from 'react-native';
 import { BarCodeScanner, WebBrowser,Constants, Location, Permissions,MapView} from 'expo';
 import { Marker, ProviderPropType } from 'react-native-maps';
@@ -31,11 +31,23 @@ class Parent extends Component{
 	  hasCameraPermission: null,
       lastScannedUrl: null,
     };
-	
+
 	componentDidMount() {
+    if (this.state.lastScannedUrl){
+      this.getLocation()
+    }
     this._requestCameraPermission();
   }
   _requestCameraPermission = async () => {
+    var config = {
+   apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
+   authDomain: "location-72fca.firebaseapp.com",
+   databaseURL: "https://location-72fca.firebaseio.com",
+   projectId: "location-72fca",
+   storageBucket: "location-72fca.appspot.com",
+   messagingSenderId: "440309375391"
+ };
+ firebase.initializeApp(config);
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({
       hasCameraPermission: status === 'granted',
@@ -53,17 +65,8 @@ class Parent extends Component{
       this.setState({
           getLocation:null
            });
-     var config = {
-    apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
-    authDomain: "location-72fca.firebaseapp.com",
-    databaseURL: "https://location-72fca.firebaseio.com",
-    projectId: "location-72fca",
-    storageBucket: "location-72fca.appspot.com",
-    messagingSenderId: "440309375391"
-  };
-  firebase.initializeApp(config);
   firebase.database().ref('users/'+this.state.lastScannedUrl).on('value', (snapshot) => {
-     const longitude = snapshot.val().loc.coords.longitude;  
+     const longitude = snapshot.val().loc.coords.longitude;
      const latitude = snapshot.val().loc.coords.latitude;
      this.setState({
            longitude:longitude,
@@ -76,6 +79,7 @@ class Parent extends Component{
 	  if(this.state.lastScannedUrl){
     if(this.state.latitude){
       return (
+        <TouchableOpacity>
         <MapView
         style={{ flex: 1 }}
 		 region={{
@@ -98,23 +102,16 @@ class Parent extends Component{
                <Text style={styles.marker}>X</Text>
              </Marker>
              </MapView>
-
+             </TouchableOpacity>
             )
 
     } else {
       if (this.state.getLocation){
         return(
-        <View style={styles.container}>
-          <Button
-      onPress={() => {this.getLocation()}}
-      title="see map"
-      color="#841584"
-      accessibilityLabel="Learn more about this purple button"
-        />
-        </View>
+ <View style={styles.container}><Text>Loading ..</Text></View>
       )
     } else {
-      return(  <View style={styles.container}><Text>Loading</Text></View>)
+      return(  <View style={styles.container}><Text>Loading ..</Text></View>)
     }
 
     }
@@ -135,9 +132,9 @@ class Parent extends Component{
                     width: Dimensions.get('window').width,
                   }}
                 />}
- 
 
-        <StatusBar hidden />
+
+
       </View>
 	  )
   }
