@@ -30,25 +30,56 @@ class Parent extends Component{
       getLocation:12345,
 	  hasCameraPermission: null,
       lastScannedUrl: null,
+      type:null
     };
+    constructor(props) {
 
+  		//alert(id.replaceAll('-', ''))
+  		//alert(id_spl)
+          super(props);
+          var config = {
+        apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
+        authDomain: "location-72fca.firebaseapp.com",
+        databaseURL: "https://location-72fca.firebaseio.com",
+        projectId: "location-72fca",
+        storageBucket: "location-72fca.appspot.com",
+        messagingSenderId: "440309375391"
+        };
+         firebase.initializeApp(config);
+      }
 	componentDidMount() {
-    this._requestCameraPermission();
+    var id = Constants.deviceId
+id = id.split("")
+var r_id = ""
+for (var i = 0; i < id.length; i++) {
+if (id[i] == "-"){
+id[i]= ""
+}
+r_id = r_id+id[i]
+}
+r_id = "p"+r_id
+firebase.database().ref('users/'+r_id).once('value',(snapshot) => {
+  try{
+    const id = snapshot.val().id;
+    this.setState({
+      lastScannedUrl: id,
+      });
+} catch (error){
+this._requestCameraPermission()
+//alert("error")
+}
+
+ });
   }
+
   _requestCameraPermission = async () => {
-    var config = {
-   apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
-   authDomain: "location-72fca.firebaseapp.com",
-   databaseURL: "https://location-72fca.firebaseio.com",
-   projectId: "location-72fca",
-   storageBucket: "location-72fca.appspot.com",
-   messagingSenderId: "440309375391"
- };
- firebase.initializeApp(config);
+
+
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({
       hasCameraPermission: status === 'granted',
-    });
+     });
+      alert("You should scan QR code from child's telephone")
   };
 
   _handleBarCodeRead = result => {
@@ -59,17 +90,34 @@ class Parent extends Component{
   };
 
     getLocation() {
+      var id = Constants.deviceId
+  id = id.split("")
+  var r_id = ""
+  for (var i = 0; i < id.length; i++) {
+if (id[i] == "-"){
+  id[i]= ""
+}
+r_id = r_id+id[i]
+}
+r_id = "p"+r_id
+
+      firebase.database().ref('users/'+r_id).set({
+    id: this.state.lastScannedUrl
+  });
       this.setState({
           getLocation:null
            });
   firebase.database().ref('users/'+this.state.lastScannedUrl).on('value', (snapshot) => {
+    try{
      const longitude = snapshot.val().loc.coords.longitude;
      const latitude = snapshot.val().loc.coords.latitude;
-     alert(343)
      this.setState({
            longitude:longitude,
            latitude:latitude,
           });
+        } catch (error){
+          
+        }
    });
 }
 
@@ -82,7 +130,7 @@ class Parent extends Component{
 	  if(this.state.lastScannedUrl){
     if(this.state.latitude){
       return (
-        <TouchableOpacity>
+
         <MapView
         style={{ flex: 1 }}
 		 region={{
@@ -105,7 +153,6 @@ class Parent extends Component{
                <Text style={styles.marker}>X</Text>
              </Marker>
              </MapView>
-             </TouchableOpacity>
             )
 
     } else {
@@ -123,7 +170,7 @@ class Parent extends Component{
 	   <View style={styles.container}>
 
         {this.state.hasCameraPermission === null
-          ? <Text>Requesting for camera permission</Text>
+          ? <Text>Loading ..</Text>
           : this.state.hasCameraPermission === false
               ? <Text style={{ color: '#fff' }}>
                   Camera permission is not granted

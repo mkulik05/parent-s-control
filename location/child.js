@@ -55,8 +55,8 @@ class Child extends Component{
     projectId: "location-72fca",
     storageBucket: "location-72fca.appspot.com",
     messagingSenderId: "440309375391"
-  };
-  firebase.initializeApp(config);
+    };
+     firebase.initializeApp(config);
       var id = Constants.deviceId
   id = id.split("")
   var r_id = ""
@@ -70,23 +70,18 @@ r_id = "c"+r_id
     this.setState({
         id: r_id,
       });
-      firebase.database().ref('users/'+r_id).once('value',(snapshot) => {
-        try{
-          const longitude = snapshot.val().loc.coords.longitude;
-          if(this.state.first){
-          this.setState({
-              type: null,
-              first:null
-            });
-}
-      } catch (error){
-        this.setState({
-          type: 1232,
-          });
-  alert("error")  
-      }
-
+      firebase.database().ref('users/' + r_id).on('value', (snapshot) => {
+    try{
+   const latitude = snapshot.val().loc.coords.latitude;
+   this.setState({
+     type: null,
+     });
+   } catch(error) {
+     this.setState({
+       type: 1234,
        });
+   }
+ });
       this.sendLocation()
       if (Platform.OS === 'android' && !Constants.isDevice) {// если платформа android и приложение работает не в симуляторе
         this.setState({
