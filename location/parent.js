@@ -116,7 +116,7 @@ r_id = "p"+r_id
            latitude:latitude,
           });
         } catch (error){
-          
+
         }
    });
 }
@@ -130,7 +130,7 @@ r_id = "p"+r_id
 	  if(this.state.lastScannedUrl){
     if(this.state.latitude){
       return (
-
+<TouchableOpacity>
         <MapView
         style={{ flex: 1 }}
 		 region={{
@@ -153,6 +153,7 @@ r_id = "p"+r_id
                <Text style={styles.marker}>X</Text>
              </Marker>
              </MapView>
+             </TouchableOpacity>
             )
 
     } else {
