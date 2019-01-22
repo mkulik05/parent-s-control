@@ -33,9 +33,6 @@ class Parent extends Component{
     };
 
 	componentDidMount() {
-    if (this.state.lastScannedUrl){
-      this.getLocation()
-    }
     this._requestCameraPermission();
   }
   _requestCameraPermission = async () => {
@@ -68,6 +65,7 @@ class Parent extends Component{
   firebase.database().ref('users/'+this.state.lastScannedUrl).on('value', (snapshot) => {
      const longitude = snapshot.val().loc.coords.longitude;
      const latitude = snapshot.val().loc.coords.latitude;
+     alert(343)
      this.setState({
            longitude:longitude,
            latitude:latitude,
@@ -76,6 +74,11 @@ class Parent extends Component{
 }
 
   render() {
+    if (this.state.lastScannedUrl){
+      if (this.state.getLocation){
+      this.getLocation()
+    }
+    }
 	  if(this.state.lastScannedUrl){
     if(this.state.latitude){
       return (
