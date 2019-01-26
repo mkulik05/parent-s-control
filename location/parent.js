@@ -58,18 +58,21 @@ id[i]= ""
 r_id = r_id+id[i]
 }
 r_id = "p"+r_id
-firebase.database().ref('users/'+r_id).once('value',(snapshot) => {
   try{
+firebase.database().ref('users/'+r_id).once('value',(snapshot) => {
+  if(snapshot && snapshot.val()){
     const id = snapshot.val().id;
     this.setState({
       lastScannedUrl: id,
       });
+    } else {
+      this._requestCameraPermission()
+    }
+     });
 } catch (error){
-this._requestCameraPermission()
-//alert("error")
+alert("error")
 }
 
- });
   }
 
   _requestCameraPermission = async () => {
@@ -130,9 +133,9 @@ r_id = "p"+r_id
 	  if(this.state.lastScannedUrl){
     if(this.state.latitude){
       return (
-<TouchableOpacity>
         <MapView
         style={{ flex: 1 }}
+        
 		 region={{
           latitude: this.state.latitude,
           longitude: this.state.longitude,
@@ -153,7 +156,6 @@ r_id = "p"+r_id
                <Text style={styles.marker}>X</Text>
              </Marker>
              </MapView>
-             </TouchableOpacity>
             )
 
     } else {
