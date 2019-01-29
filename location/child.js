@@ -20,7 +20,7 @@ const colors = [
   "#1ABC9C",
   "#F1C40F",
   "#E67E22",
-  "#F0F3F4", 
+  "#F0F3F4",
   "#2C3E50"
 ]
 
@@ -36,7 +36,8 @@ class Child extends Component{
     color : 0,
     id:null,
     type:null,
-    first:123
+    first:null,
+    flag:null
   };
 
   constructor(props) {
@@ -44,19 +45,10 @@ class Child extends Component{
     //alert(id.replaceAll('-', ''))
     //alert(id_spl)
     super(props);
-
   }
 
   componentWillMount() {
-    var config = {
-      apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
-      authDomain: "location-72fca.firebaseapp.com",
-      databaseURL: "https://location-72fca.firebaseio.com",
-      projectId: "location-72fca",
-      storageBucket: "location-72fca.appspot.com",
-      messagingSenderId: "440309375391"
-    };
-    firebase.initializeApp(config);
+
     var id = Constants.deviceId
     id = id.split("")
     var r_id = ""
@@ -69,29 +61,9 @@ class Child extends Component{
     r_id = "c"+r_id
     this.setState({
       id: r_id,
+      first:this.props.first,
+      flag:1233
     });
-
-
-    try{
-      firebase.database().ref('users/' + r_id).once('value', (snapshot) => {
-        if(snapshot && snapshot.val()){
-          const latitude = snapshot.val().loc.coords.latitude;
-          this.setState({
-            type: null,
-          });
-          this.sendLocation()
-        } else {
-          this.sendLocation()
-          this.setState({
-            type: 1234,
-          });
-        }
-      });
-    } catch (error){
-      alert("error")
-      this.sendLocation()
-    }
-
 
     if (Platform.OS === 'android' && !Constants.isDevice) {// если платформа android и приложение работает не в симуляторе
       this.setState({
@@ -100,6 +72,7 @@ class Child extends Component{
     } else {
       this._getLocationAsync(); //вызов функции
     }
+    this.sendLocation()
 
   }
 
@@ -162,7 +135,7 @@ class Child extends Component{
   }
   game(){
     this.setState({
-      type: null,
+      first: 123,
     })
   }
   render() {
@@ -180,8 +153,8 @@ class Child extends Component{
         <TouchableOpacity key={'s' + colorNum} onPress={() => { this.onSuggestPress(colorNum) }}style={[styles.mixel, {backgroundColor: colors[colorNum]}]}/>
       )
     }
-
-    if(!this.state.type){
+if (this.state.flag){
+    if(this.state.first){
       return(
         <View style={styles.container_mixel}>
 
@@ -211,8 +184,13 @@ class Child extends Component{
       )
 
     }
+  } else {
+    return(
+<View style={styles.container}><Text>Loading ..</Text></View>
+  )
   }
 
+}
 }
 const styles = StyleSheet.create({
   container: {

@@ -32,21 +32,6 @@ class Parent extends Component{
       lastScannedUrl: null,
       type:null
     };
-    constructor(props) {
-
-  		//alert(id.replaceAll('-', ''))
-  		//alert(id_spl)
-          super(props);
-          var config = {
-        apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
-        authDomain: "location-72fca.firebaseapp.com",
-        databaseURL: "https://location-72fca.firebaseio.com",
-        projectId: "location-72fca",
-        storageBucket: "location-72fca.appspot.com",
-        messagingSenderId: "440309375391"
-        };
-         firebase.initializeApp(config);
-      }
 	componentDidMount() {
     var id = Constants.deviceId
 id = id.split("")
@@ -135,7 +120,7 @@ r_id = "p"+r_id
       return (
         <MapView
         style={{ flex: 1 }}
-        
+
 		 region={{
           latitude: this.state.latitude,
           longitude: this.state.longitude,
@@ -159,15 +144,10 @@ r_id = "p"+r_id
             )
 
     } else {
-      if (this.state.getLocation){
-        return(
- <View style={styles.container}><Text>Loading ..</Text></View>
-      )
-    } else {
       return(  <View style={styles.container}><Text>Loading ..</Text></View>)
     }
 
-    }
+    
   } else {
 	  return(
 	   <View style={styles.container}>
