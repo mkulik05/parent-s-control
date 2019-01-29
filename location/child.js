@@ -20,7 +20,7 @@ const colors = [
   "#1ABC9C",
   "#F1C40F",
   "#E67E22",
-  "#F0F3F4",
+  "#F0F3F4", 
   "#2C3E50"
 ]
 
