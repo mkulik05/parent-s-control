@@ -108,10 +108,12 @@ class Child extends Component{
     return location
   };
   sendLocation() {
-    alert("sendLocation")
+    console.log("Location "+this.state.location+" to user "+ this.state.id)
+    if (this.state.location){
     firebase.database().ref('users/'+this.state.id).set({
       loc: this.state.location
     });
+  }
     //alert(228)
     //alert("sendLocation1")
     clearInterval(this.interval);

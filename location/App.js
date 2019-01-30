@@ -79,7 +79,6 @@ export default class HomeScreen extends React.Component {
         } else {
           alert("321")
           this.setState({
-            type: null,
             Loading:123
           });
     }
@@ -99,9 +98,8 @@ export default class HomeScreen extends React.Component {
           });
 
         } else {
-      //    alert("2*321")
+          alert("2*321")
           this.setState({
-            type: null,
             Loading:123
           });
     }
