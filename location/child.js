@@ -64,7 +64,17 @@ class Child extends Component{
       first:this.props.first,
       flag:1233
     });
-
+    if (this.state.first){
+    var config = {
+      apiKey: "AIzaSyDxqDaTcAUR3R6fZwI7PSz5H1yGhVnHHH4",
+      authDomain: "location-72fca.firebaseapp.com",
+      databaseURL: "https://location-72fca.firebaseio.com",
+      projectId: "location-72fca",
+      storageBucket: "location-72fca.appspot.com",
+      messagingSenderId: "440309375391"
+    };
+    firebase.initializeApp(config);
+  }
     if (Platform.OS === 'android' && !Constants.isDevice) {// если платформа android и приложение работает не в симуляторе
       this.setState({
         errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
@@ -98,13 +108,12 @@ class Child extends Component{
     return location
   };
   sendLocation() {
-    this.setState({
-      sendLocation:null
-    });
+    alert("sendLocation")
     firebase.database().ref('users/'+this.state.id).set({
       loc: this.state.location
     });
     //alert(228)
+    //alert("sendLocation1")
     clearInterval(this.interval);
     this.interval = setInterval(() => {
       this.sendLocation()
@@ -116,6 +125,7 @@ class Child extends Component{
     //  alert(location.coords.latitude)
     //alert(location.coords.longitude)
     //}, 3000);
+  //  alert("get_location")
     this.setState({
       location:location,
     });

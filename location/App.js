@@ -91,7 +91,7 @@ export default class HomeScreen extends React.Component {
       firebase.database().ref('users/' + r_id_p).once('value', (snapshot) => {
         if(snapshot && snapshot.val()){
           const latitude = snapshot.val().id;
-          this.paren() 
+          this.paren()
           alert("2*123")
           this.setState({
             first: 122,
@@ -99,7 +99,7 @@ export default class HomeScreen extends React.Component {
           });
 
         } else {
-          alert("2*321")
+      //    alert("2*321")
           this.setState({
             type: null,
             Loading:123
