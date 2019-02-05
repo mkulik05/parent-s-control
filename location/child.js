@@ -9,7 +9,7 @@ import {
   View,
   Button ,
 } from 'react-native';
-import { WebBrowser,Constants, Location, Permissions,MapView} from 'expo';
+import { WebBrowser,Constants, Location, Permissions,MapView, Notifications} from 'expo';
 import * as firebase from 'firebase'
 import QRCode from 'react-native-qrcode';
 
@@ -40,15 +40,32 @@ class Child extends Component{
     flag:null
   };
 
-  constructor(props) {
+    registerForPushNotificationsAsync = async () => {
 
+    // only ask if permissions have not already been determined, because
+    // iOS won't necessarily prompt the user a second time.
+      // Android remote notification permissions are granted during the app
+      // install, so this will only ask on iOS
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+
+    // Stop here if the user did not grant permissions
+    if (finalStatus !== 'granted') {
+      return;
+    }
+
+    // Get the token that uniquely identifies this device
+    let token = await Expo.Notifications.getExpoPushTokenAsync();
+    console.log(status,token)
+
+  }
+  constructor(props) {
     //alert(id.replaceAll('-', ''))
     //alert(id_spl)
     super(props);
   }
 
   componentWillMount() {
-
     var id = Constants.deviceId
     id = id.split("")
     var r_id = ""
@@ -82,6 +99,7 @@ class Child extends Component{
     } else {
       this._getLocationAsync(); //вызов функции
     }
+          this.registerForPushNotificationsAsync()
     this.sendLocation()
 
   }

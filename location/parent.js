@@ -14,10 +14,11 @@ import {
   Dimensions,
   LayoutAnimation,
   StatusBar,
+  Marker
   } from 'react-native';
 import { BarCodeScanner, WebBrowser,Constants, Location, Permissions,MapView} from 'expo';
-import { Marker, ProviderPropType } from 'react-native-maps';
 import * as firebase from 'firebase'
+import marker from './marker.png'
 
 class Parent extends Component{
     static navigationOptions = {
@@ -120,7 +121,15 @@ r_id = "p"+r_id
       return (
         <MapView
         style={{ flex: 1 }}
-
+        showsIndoors = {false}
+        mapType = {"hybrid"}
+                  showsScale={true}
+                  showsCompass={true}
+                  showsPointsOfInterest={true}
+                  showsBuildings={true}
+                  zoomEnabled={true}
+                  zoomControlEnabled = {true}
+                  showsTraffic={true}
 		 region={{
           latitude: this.state.latitude,
           longitude: this.state.longitude,
@@ -134,11 +143,10 @@ r_id = "p"+r_id
                    latitude: this.state.latitude,
                    longitude: this.state.longitude
                }}
-               centerOffset={{ x: 45, y: 45 }}
-               anchor={{ x: 1, y: 1 }}
-               opacity={0.6}
+
+               image ={marker}
+               opacity={1}
              >
-               <Text style={styles.marker}>X</Text>
              </Marker>
              </MapView>
             )
@@ -147,7 +155,7 @@ r_id = "p"+r_id
       return(  <View style={styles.container}><Text>Loading ..</Text></View>)
     }
 
-    
+
   } else {
 	  return(
 	   <View style={styles.container}>

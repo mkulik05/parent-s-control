@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
   View,
   Button ,
+  Marker
 } from 'react-native';
 import { WebBrowser,Constants, Location, Permissions,MapView} from 'expo';
-import { Marker, ProviderPropType } from 'react-native-maps';
+
 import * as firebase from 'firebase'
 import {Parent} from './parent'
 import {Child} from './child'
@@ -69,7 +70,7 @@ export default class HomeScreen extends React.Component {
         if(snapshot && snapshot.val()){
           const latitude = snapshot.val().loc.coords.latitude;
           this.child()
-          alert("123")
+        //  alert("123")
           this.setState({
             first: 122,
             type: 123,
@@ -77,28 +78,28 @@ export default class HomeScreen extends React.Component {
           });
 
         } else {
-          alert("321")
+        //  alert("321")
           this.setState({
             Loading:123
           });
     }
     })
     } catch(e){
-    alert("123s")
+  //  alert("123s")
     }
     try{
       firebase.database().ref('users/' + r_id_p).once('value', (snapshot) => {
         if(snapshot && snapshot.val()){
           const latitude = snapshot.val().id;
           this.paren()
-          alert("2*123")
+      //    alert("2*123")
           this.setState({
             first: 122,
             Loading:123
           });
 
         } else {
-          alert("2*321")
+        //  alert("2*321")
           this.setState({
             Loading:123
           });
